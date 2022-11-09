@@ -1,34 +1,35 @@
 import axios from 'axios';
 import React, { FormEvent, useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
-import styles from './Login.module.css';
+import styles from './Register.module.css';
 
-function Login() {
+function Register() {
 	const [email, setEmail] = useState('');
+	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 
-	const login = async (event: FormEvent) => {
+	const register = async (event: FormEvent) => {
 		event.preventDefault();
 		try {
 			axios.post(
-				'http://localhost:4000/auth/local/login',
+				'http://localhost:4000/auth/local/register',
 				{
 					email,
+					username,
 					password,
 				},
 				{ withCredentials: true }
 			);
 		} catch (err) {}
 	};
-
 	const googleLogin = () => {
 		window.open('http://localhost:4000/auth/google', '_self');
 	};
 
 	return (
 		<div className={styles.loginPage}>
-			<h1>Login</h1>
-			<form onSubmit={login}>
+			<h1>Register</h1>
+			<form onSubmit={register}>
 				<input
 					type="email"
 					placeholder="Email"
@@ -36,12 +37,18 @@ function Login() {
 					onChange={(e) => setEmail(e.target.value)}
 				></input>
 				<input
+					type="text"
+					placeholder="Username"
+					value={username}
+					onChange={(e) => setUsername(e.target.value)}
+				></input>
+				<input
 					type="password"
 					placeholder="Password"
 					value={password}
 					onChange={(e) => setPassword(e.target.value)}
 				></input>
-				<input type="submit" value="Login" />
+				<input type="submit" value="Register" />
 			</form>
 			<div className={styles.loginForm}>
 				<h3>Or login with:</h3>
@@ -56,4 +63,4 @@ function Login() {
 	);
 }
 
-export default Login;
+export default Register;

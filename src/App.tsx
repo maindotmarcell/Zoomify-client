@@ -5,6 +5,7 @@ import Home from './Components/Home/Home';
 import Login from './Components/Login/Login';
 import NavBar from './Components/NavBar/NavBar';
 import { myContext } from './Context';
+import Register from './Components/Register/Register';
 
 function App() {
 	const userObject = useContext(myContext);
@@ -15,6 +16,7 @@ function App() {
 			<Routes>
 				<Route path="/" element={<Home />} />
 				<Route path="/login" element={<Login />} />
+				<Route path="/register" element={<Register />} />
 			</Routes>
 		</div>
 	);

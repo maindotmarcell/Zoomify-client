@@ -14,7 +14,8 @@ export default function NavBar() {
 				if (res.data === 'success') {
 					window.location.href = '/';
 				}
-			});
+			})
+			.catch((err) => console.log(err));
 	};
 
 	return (
@@ -22,6 +23,9 @@ export default function NavBar() {
 			<ul className={styles.navBar}>
 				<li>
 					<Link to="/">Home</Link>
+				</li>
+				<li>
+					<Link to="/register">Register</Link>
 				</li>
 				<li>
 					<Link to="/login">Login</Link>
