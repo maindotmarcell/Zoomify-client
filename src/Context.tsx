@@ -1,5 +1,6 @@
 import React, { useState, createContext, useEffect } from 'react';
-import axios, { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
+import axios from './constants/axios';
 
 export const myContext = createContext({});
 
@@ -8,7 +9,7 @@ export default function Context({ children }: any) {
 
 	useEffect(() => {
 		axios
-			.get('http://localhost:4000/getuser', { withCredentials: true })
+			.get('/getuser', { withCredentials: true })
 			.then((res: AxiosResponse) => {
 				console.log(res);
 				if (res.data) {

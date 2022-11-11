@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../../constants/axios';
 import React, { FormEvent, useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import styles from './Register.module.css';
@@ -12,7 +12,7 @@ function Register() {
 		event.preventDefault();
 		try {
 			axios.post(
-				'http://localhost:4000/auth/local/register',
+				'/auth/local/register',
 				{
 					email,
 					username,

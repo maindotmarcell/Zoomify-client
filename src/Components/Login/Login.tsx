@@ -11,7 +11,7 @@ function Login() {
 		event.preventDefault();
 		try {
 			axios.post(
-				'http://localhost:4000/auth/local/login',
+				'/login',
 				{
 					email,
 					password,

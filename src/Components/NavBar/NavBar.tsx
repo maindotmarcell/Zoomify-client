@@ -1,12 +1,13 @@
 import React from 'react';
 import styles from './NavBar.module.css';
 import { Link } from 'react-router-dom';
-import axios, { AxiosResponse } from 'axios';
+import axios from '../../constants/axios';
+import { AxiosResponse } from 'axios';
 
 export default function NavBar() {
 	const logout = () => {
 		axios
-			.get('http://localhost:4000/auth/logout', {
+			.get('/auth/logout', {
 				withCredentials: true,
 			})
 			.then((res: AxiosResponse) => {
