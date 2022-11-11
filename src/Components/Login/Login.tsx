@@ -1,23 +1,28 @@
-import axios from 'axios';
-import React, { FormEvent, useState } from 'react';
+import axios from '../../constants/axios';
+import React, { FormEvent, useContext, useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import styles from './Login.module.css';
+import { myContext } from '../../Context';
+import { IUser } from '../../types/maintypes';
 
 function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const { refreshUser } = useContext(myContext) as any;
 
 	const login = async (event: FormEvent) => {
 		event.preventDefault();
 		try {
-			axios.post(
-				'/login',
+			const response = await axios.post(
+				'auth/local/login',
 				{
 					email,
 					password,
 				},
 				{ withCredentials: true }
 			);
+			console.log(response);
+			refreshUser();
 		} catch (err) {}
 	};
 

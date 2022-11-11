@@ -8,6 +8,10 @@ export default function Context({ children }: any) {
 	const [userObject, setUserObject] = useState<any>();
 
 	useEffect(() => {
+		refreshUser();
+	}, []);
+
+	const refreshUser = () => {
 		axios
 			.get('/getuser', { withCredentials: true })
 			.then((res: AxiosResponse) => {
@@ -16,7 +20,11 @@ export default function Context({ children }: any) {
 					setUserObject(res.data);
 				}
 			});
-	}, []);
+	};
 
-	return <myContext.Provider value={userObject}>{children}</myContext.Provider>;
+	return (
+		<myContext.Provider value={{ userObject, refreshUser }}>
+			{children}
+		</myContext.Provider>
+	);
 }
