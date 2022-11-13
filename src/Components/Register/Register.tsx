@@ -1,17 +1,19 @@
 import axios from '../../constants/axios';
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useContext, useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import styles from './Register.module.css';
+import { myContext } from '../../Context';
 
 function Register() {
 	const [email, setEmail] = useState('');
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
+	const { refreshUser } = useContext(myContext) as any;
 
 	const register = async (event: FormEvent) => {
 		event.preventDefault();
 		try {
-			axios.post(
+			const response = await axios.post(
 				'/auth/local/register',
 				{
 					email,
@@ -20,7 +22,11 @@ function Register() {
 				},
 				{ withCredentials: true }
 			);
-		} catch (err) {}
+			console.log(response);
+			refreshUser();
+		} catch (err) {
+			console.log(err);
+		}
 	};
 	const googleLogin = () => {
 		window.open('http://localhost:4000/auth/google', '_self');

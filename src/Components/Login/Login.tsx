@@ -3,7 +3,6 @@ import React, { FormEvent, useContext, useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import styles from './Login.module.css';
 import { myContext } from '../../Context';
-import { IUser } from '../../types/maintypes';
 
 function Login() {
 	const [email, setEmail] = useState('');
@@ -23,7 +22,9 @@ function Login() {
 			);
 			console.log(response);
 			refreshUser();
-		} catch (err) {}
+		} catch (err) {
+			console.log(err);
+		}
 	};
 
 	const googleLogin = () => {
