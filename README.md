@@ -1,4 +1,4 @@
-# Auth_Pro-Server
+# Auth_Pro-client
 
 Backend for this application can be found by here: [https://github.com/maindotmarcell/Auth_Pro-server](https://github.com/maindotmarcell/Auth_Pro-server)
 
