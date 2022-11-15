@@ -23,6 +23,22 @@
 	position: absolute;
 }
 
+.githubContainer {
+    background: rgb(56, 56, 56);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 300px;
+	height: 50px;
+	position: relative;
+	color: white;
+	font-family: 'Poppins', sans-serif;
+	font-size: 13px;
+	cursor: pointer;
+	margin: 10px;
+}
+
+
 .loginPage {
 	width: 100vw;
 	display: flex;

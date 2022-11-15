@@ -1,6 +1,7 @@
 import axios from '../../constants/axios';
 import React, { FormEvent, useContext, useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
+import { FaGithub } from 'react-icons/fa';
 import styles from './Login.module.css';
 import { myContext } from '../../Context';
 
@@ -31,6 +32,10 @@ function Login() {
 		window.open('http://localhost:4000/auth/google', '_self');
 	};
 
+	const githubLogin = () => {
+		window.open('http://localhost:4000/auth/github', '_self');
+	};
+
 	return (
 		<div className={styles.loginPage}>
 			<h1>Login</h1>
@@ -55,6 +60,12 @@ function Login() {
 					<p>
 						<FcGoogle size="2rem" />
 						Login with Google
+					</p>
+				</div>
+				<div className={styles.githubContainer} onClick={githubLogin}>
+					<p>
+						<FaGithub size="2rem" />
+						Login with Github
 					</p>
 				</div>
 			</div>
