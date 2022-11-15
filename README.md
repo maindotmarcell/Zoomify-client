@@ -1,4 +1,4 @@
-# Getting Started with Create React App
+# Auth_Pro-Server
 
 Backend for this application can be found by here: [https://github.com/maindotmarcell/Auth_Pro-server](https://github.com/maindotmarcell/Auth_Pro-server)
 
