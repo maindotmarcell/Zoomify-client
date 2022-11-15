@@ -6,7 +6,6 @@ import styles from './Login.module.css';
 import { myContext } from '../../Context';
 
 function Login() {
-	console.log(axios.defaults.baseURL);
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const { refreshUser } = useContext(myContext) as any;
