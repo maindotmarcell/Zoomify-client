@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import { myContext } from '../../Context';
-import { IUser } from '../../types/maintypes';
 
 export default function Home() {
 	const { userObject } = useContext(myContext) as any;

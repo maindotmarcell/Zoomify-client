@@ -6,6 +6,7 @@ import styles from './Login.module.css';
 import { myContext } from '../../Context';
 
 function Login() {
+	console.log(axios.defaults.baseURL);
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const { refreshUser } = useContext(myContext) as any;
@@ -29,11 +30,11 @@ function Login() {
 	};
 
 	const googleLogin = () => {
-		window.open('http://localhost:4000/auth/google', '_self');
+		window.open(`${axios.defaults.baseURL}/auth/google`, '_self');
 	};
 
 	const githubLogin = () => {
-		window.open('http://localhost:4000/auth/github', '_self');
+		window.open(`${axios.defaults.baseURL}/auth/github`, '_self');
 	};
 
 	return (

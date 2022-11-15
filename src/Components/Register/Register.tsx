@@ -29,12 +29,13 @@ function Register() {
 			console.log(err);
 		}
 	};
+
 	const googleLogin = () => {
-		window.open('http://localhost:4000/auth/google', '_self');
+		window.open(`${axios.defaults.baseURL}/auth/google`, '_self');
 	};
 
 	const githubLogin = () => {
-		window.open('http://localhost:4000/auth/github', '_self');
+		window.open(`${axios.defaults.baseURL}/auth/github`, '_self');
 	};
 
 	return (
