@@ -3,8 +3,11 @@ import styles from './NavBar.module.css';
 import { Link } from 'react-router-dom';
 import axios from '../../constants/axios';
 import { AxiosResponse } from 'axios';
+import { Button, useColorMode } from '@chakra-ui/react';
 
 export default function NavBar() {
+	const { toggleColorMode } = useColorMode();
+
 	const logout = () => {
 		axios
 			.get('/auth/logout', {
@@ -32,6 +35,7 @@ export default function NavBar() {
 					<Link to="/login">Login</Link>
 				</li>
 				<li onClick={logout}>Logout</li>
+				<Button onClick={toggleColorMode}>Toggle Theme</Button>
 			</ul>
 		</div>
 	);

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { myContext } from '../../Context';
+import { myContext } from '../../context/UserContext';
 
 export default function Home() {
 	const { userObject } = useContext(myContext) as any;

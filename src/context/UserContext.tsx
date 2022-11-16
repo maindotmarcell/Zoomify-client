@@ -1,6 +1,6 @@
 import React, { useState, createContext, useEffect } from 'react';
 import { AxiosResponse } from 'axios';
-import axios from './constants/axios';
+import axios from '../constants/axios';
 
 export const myContext = createContext({});
 
