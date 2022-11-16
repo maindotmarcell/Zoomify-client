@@ -6,6 +6,7 @@ export const myContext = createContext({});
 
 export default function Context({ children }: any) {
 	const [userObject, setUserObject] = useState<any>();
+	const [signedIn, setSignedIn] = useState(false);
 
 	useEffect(() => {
 		refreshUser();
@@ -18,12 +19,13 @@ export default function Context({ children }: any) {
 				console.log(res);
 				if (res.data) {
 					setUserObject(res.data);
+					setSignedIn(true);
 				}
 			});
 	};
 
 	return (
-		<myContext.Provider value={{ userObject, refreshUser }}>
+		<myContext.Provider value={{ userObject, refreshUser, signedIn, setSignedIn }}>
 			{children}
 		</myContext.Provider>
 	);

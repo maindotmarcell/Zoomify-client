@@ -10,14 +10,15 @@ import {
 	Input,
 	useColorModeValue,
 	Text,
-	VStack,
 	Stack,
 } from '@chakra-ui/react';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const { refreshUser } = useContext(myContext) as any;
+	const navigate = useNavigate();
 
 	const formBackground = useColorModeValue('gray.50', 'gray.700');
 
@@ -34,6 +35,7 @@ function Login() {
 			);
 			console.log(response);
 			refreshUser();
+			navigate("/")
 		} catch (err) {
 			console.log(err);
 		}
@@ -51,7 +53,7 @@ function Login() {
 		<Flex height="100vh" alignItems="center" justifyContent="center">
 			<Flex direction="column" background={formBackground} p={12} rounded={6}>
 				<form onSubmit={login}>
-					<Stack>
+					<Stack mb={6}>
 						<Heading mb={6}>Login</Heading>
 						<Input
 							variant="filled"
@@ -74,7 +76,7 @@ function Login() {
 						</Button>
 					</Stack>
 				</form>
-				<VStack>
+				<Stack mb={6}>
 					<h3>Or register with:</h3>
 					<Button
 						background="#4385f4"
@@ -94,7 +96,10 @@ function Login() {
 					>
 						<Text>Login with GitHub</Text>
 					</Button>
-				</VStack>
+				</Stack>
+				<Text>
+					Don't have an account yet? <Link to="/register">Register here</Link>.
+				</Text>
 			</Flex>
 		</Flex>
 	);

@@ -13,8 +13,8 @@ import {
 	Stack,
 	Text,
 	useColorModeValue,
-	VStack,
 } from '@chakra-ui/react';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Register() {
 	// input field values
@@ -33,6 +33,9 @@ function Register() {
 
 	// user context
 	const { refreshUser } = useContext(myContext) as any;
+
+	// router navigater
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		!password && !email && !username
@@ -62,7 +65,6 @@ function Register() {
 		passwordMatching
 			? setInputValid(true)
 			: setInputValid(false);
-		console.log(inputValid);
 	}, [
 		email,
 		username,
@@ -96,6 +98,7 @@ function Register() {
 			);
 			console.log(response);
 			refreshUser();
+			navigate("/");
 		} catch (err) {
 			console.log(err);
 		}
@@ -180,7 +183,7 @@ function Register() {
 						)}
 					</Stack>
 				</form>
-				<VStack>
+				<Stack mb={6}>
 					<h3>Or register with:</h3>
 					<Button
 						background="#4385f4"
@@ -200,7 +203,10 @@ function Register() {
 					>
 						<Text>Register with GitHub</Text>
 					</Button>
-				</VStack>
+				</Stack>
+				<Text>
+					Already have an account? <Link to="/login">Login here</Link>.
+				</Text>
 			</Flex>
 		</Flex>
 	);

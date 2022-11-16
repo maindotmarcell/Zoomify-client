@@ -7,19 +7,26 @@ import NavBar from './components/NavBar/NavBar';
 import { myContext } from './context/UserContext';
 import Register from './components/Register/Register';
 import { ChakraProvider } from '@chakra-ui/react';
+import PrivateRoute from './PrivateRoute/PrivateRoute';
+import Context from './context/UserContext';
+import AuthRoute from './PrivateRoute/AuthRoute';
 
 function App() {
-	const userObject = useContext(myContext);
-	console.log(userObject);
 	return (
 		<ChakraProvider>
 			<div className="App">
-				<NavBar />
-				<Routes>
-					<Route path="/" element={<Home />} />
-					<Route path="/login" element={<Login />} />
-					<Route path="/register" element={<Register />} />
-				</Routes>
+				<Context>
+					<NavBar />
+					<Routes>
+						<Route element={<PrivateRoute />}>
+							<Route path="/" element={<Home />} />
+						</Route>
+						<Route element={<AuthRoute />}>
+							<Route path="/login" element={<Login />} />
+							<Route path="/register" element={<Register />} />
+						</Route>
+					</Routes>
+				</Context>
 			</div>
 		</ChakraProvider>
 	);
