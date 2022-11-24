@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import styles from './NavBar.module.css';
-import { Link } from 'react-router-dom';
 import axios from '../../constants/axios';
 import { AxiosResponse } from 'axios';
 import { Button, useColorMode } from '@chakra-ui/react';
@@ -8,7 +7,7 @@ import { myContext } from '../../context/UserContext';
 
 export default function NavBar() {
 	const { signedIn } = useContext(myContext) as any;
-	console.log(signedIn);
+	console.log('Signed in: ', signedIn);
 	const { toggleColorMode } = useColorMode();
 
 	const logout = () => {

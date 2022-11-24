@@ -1,5 +1,5 @@
 import axios from '../../constants/axios';
-import React, { FormEvent, useContext, useState } from 'react';
+import React, { FormEvent, useContext, useEffect, useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
 import { myContext } from '../../context/UserContext';
@@ -11,12 +11,27 @@ import {
 	useColorModeValue,
 	Text,
 	Stack,
+	FormControl,
+	FormErrorMessage,
 } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
+import { githubLogin, googleLogin } from '../../helper/oauthStrategies';
+import isValidEmail from '../../helper/isValidEmail';
 
 function Login() {
+	// input field values
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+
+	// form validation values
+	const [inputValid, setInputValid] = useState(false);
+	const [invalidCredentials, setInvalidCredentials] = useState(false);
+
+	useEffect(() => {
+		if (isValidEmail(email) && password) setInputValid(true);
+		else setInputValid(false);
+	}, [email, password]);
+
 	const { refreshUser } = useContext(myContext) as any;
 	const navigate = useNavigate();
 
@@ -35,18 +50,13 @@ function Login() {
 			);
 			console.log(response);
 			refreshUser();
-			navigate("/")
-		} catch (err) {
+			navigate('/');
+		} catch (err: any) {
 			console.log(err);
+			if (err.response.status === 401) {
+				setInvalidCredentials(true);
+			}
 		}
-	};
-
-	const googleLogin = () => {
-		window.open(`${axios.defaults.baseURL}/auth/google`, '_self');
-	};
-
-	const githubLogin = () => {
-		window.open(`${axios.defaults.baseURL}/auth/github`, '_self');
 	};
 
 	return (
@@ -55,25 +65,36 @@ function Login() {
 				<form onSubmit={login}>
 					<Stack mb={6}>
 						<Heading mb={6}>Login</Heading>
-						<Input
-							variant="filled"
-							mb={3}
-							type="email"
-							placeholder="Email"
-							value={email}
-							onChange={(e) => setEmail(e.target.value)}
-						></Input>
-						<Input
-							variant="filled"
-							mb={6}
-							type="password"
-							placeholder="Password"
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-						></Input>
-						<Button mb={6} colorScheme="teal" type="submit">
-							Login
-						</Button>
+						<FormControl isInvalid={invalidCredentials}>
+							<Input
+								variant="filled"
+								mb={3}
+								type="email"
+								placeholder="Email"
+								value={email}
+								onChange={(e) => setEmail(e.target.value)}
+							></Input>
+							<Input
+								variant="filled"
+								mb={3}
+								type="password"
+								placeholder="Password"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+							></Input>
+							{invalidCredentials && (
+								<FormErrorMessage>Invalid Login Credentials</FormErrorMessage>
+							)}
+						</FormControl>
+						{inputValid ? (
+							<Button colorScheme="teal" type="submit">
+								Login
+							</Button>
+						) : (
+							<Button colorScheme="gray" style={{ cursor: 'auto' }}>
+								Login
+							</Button>
+						)}
 					</Stack>
 				</form>
 				<Stack mb={6}>

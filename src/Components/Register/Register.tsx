@@ -1,5 +1,5 @@
-import axios from '../../constants/axios';
 import React, { FormEvent, useContext, useEffect, useState } from 'react';
+import axios from '../../constants/axios';
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
 import { myContext } from '../../context/UserContext';
@@ -15,6 +15,8 @@ import {
 	useColorModeValue,
 } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
+import { githubLogin, googleLogin } from '../../helper/oauthStrategies';
+import isValidEmail from '../../helper/isValidEmail';
 
 function Register() {
 	// input field values
@@ -30,6 +32,10 @@ function Register() {
 	const [inputIsEmpty, setInputIsEmpty] = useState(true);
 	const [inputValid, setInputValid] = useState(false);
 	const [passwordMatching, setPasswordMatching] = useState(true);
+
+	// email taken validation
+	const [emailTaken, setEmailTaken] = useState(false);
+	const [prevEmail, setPrevEmail] = useState('');
 
 	// user context
 	const { refreshUser } = useContext(myContext) as any;
@@ -80,10 +86,6 @@ function Register() {
 
 	const formBackground = useColorModeValue('gray.50', 'gray.700');
 
-	const isValidEmail = (email: string) => {
-		return /\S+@\S+\.\S+/.test(email);
-	};
-
 	const register = async (event: FormEvent) => {
 		event.preventDefault();
 		try {
@@ -98,18 +100,15 @@ function Register() {
 			);
 			console.log(response);
 			refreshUser();
-			navigate("/");
-		} catch (err) {
+			navigate('/');
+		} catch (err: any) {
 			console.log(err);
+			console.log(err.response.status);
+			if (err.response.status === 409) {
+				setPrevEmail(email);
+				setEmailTaken(true);
+			}
 		}
-	};
-
-	const googleLogin = () => {
-		window.open(`${axios.defaults.baseURL}/auth/google`, '_self');
-	};
-
-	const githubLogin = () => {
-		window.open(`${axios.defaults.baseURL}/auth/github`, '_self');
 	};
 
 	return (
@@ -132,7 +131,7 @@ function Register() {
 								</FormErrorMessage>
 							)}
 						</FormControl>
-						<FormControl isInvalid={emailInvalid}>
+						<FormControl isInvalid={emailInvalid || emailTaken}>
 							<Input
 								variant="filled"
 								type="email"
@@ -143,6 +142,11 @@ function Register() {
 							{emailInvalid && (
 								<FormErrorMessage>
 									Email must have a valid format
+								</FormErrorMessage>
+							)}
+							{emailTaken && (
+								<FormErrorMessage>
+									Email: {prevEmail} is already taken
 								</FormErrorMessage>
 							)}
 						</FormControl>
