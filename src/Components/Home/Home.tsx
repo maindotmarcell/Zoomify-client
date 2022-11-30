@@ -44,20 +44,27 @@ export default function Home() {
 				myVideo.current.srcObject = stream;
 			});
 
-		socket.current.on('me', (id: string) => {
+		// define behavious for possible incoming socket.io events
+		socket.current.on('me', (id: string) => { // for getting socket id
 			console.log(id);
 			setMe(id);
 		});
 
-		socket.current.on('callUser', (data) => {
+		socket.current.on('callUser', (data) => { // for setting up incoming call
 			setReceivingCall(true);
 			setCaller(data.from);
 			setName(data.name);
 			setCallerSignal(data.signal);
 		});
+
+		// socket.current.on('callEnded', () => {
+		// 	console.log('hi');
+		// 	// connectionRef.current.destroy();
+		// })
 	}, []);
 
 	const callUser = (id: string) => {
+		// initialising peer connection
 		const peer = new Peer({
 			initiator: true,
 			trickle: false,
