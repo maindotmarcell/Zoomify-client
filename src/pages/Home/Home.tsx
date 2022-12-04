@@ -66,9 +66,9 @@ export default function Home() {
 			setReceivingCall(false);
 			setCaller('');
 			setCallAccepted(false);
-			socket.current.disconnect();
-			socket.current.connect();
-			connectionRef.current.destroy();
+			// socket.current.disconnect();
+			// socket.current.connect();
+			window.location.reload();
 		});
 	}, []);
 
@@ -130,9 +130,10 @@ export default function Home() {
 		setCaller('');
 		setCallAccepted(false);
 		// socket.current.emit('endCall');
-		socket.current.disconnect();
-		socket.current.connect();
+		// socket.current.disconnect();
+		// socket.current.connect();
 		connectionRef.current.destroy();
+		window.location.reload();
 	};
 
 	return (

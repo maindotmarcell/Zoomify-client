@@ -11,6 +11,7 @@ export interface IUser {
 export interface IUserContext {
 	userObject: IUser;
 	signedIn: boolean;
+	loadingUser: boolean;
 	setSignedIn(): void;
 	refreshUser(): void;
 }

@@ -1,0 +1,24 @@
+.semi-transparent {
+	position: absolute;
+	padding: 0;
+	margin: 0;
+
+	top: 0;
+	left: 0;
+
+	width: 100%;
+	height: 100%;
+	background: rgba(255, 255, 255);
+	z-index: 90;
+}
+
+.spinner {
+	position: absolute;
+	margin: auto;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	text-align: center;
+	z-index: 100;
+}

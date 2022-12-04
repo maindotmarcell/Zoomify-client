@@ -6,7 +6,6 @@ import NavBar from './components/NavBar/NavBar';
 import Register from './pages/Register/Register';
 import { ChakraProvider } from '@chakra-ui/react';
 import PrivateRoute from './PrivateRoute/PrivateRoute';
-import Context from './context/UserContext';
 import AuthRoute from './PrivateRoute/AuthRoute';
 import theme from './constants/theme';
 
@@ -14,18 +13,16 @@ function App() {
 	return (
 		<ChakraProvider theme={theme}>
 			<div className="App">
-				<Context>
-					<NavBar />
-					<Routes>
-						<Route element={<PrivateRoute />}>
-							<Route path="/" element={<Home />} />
-						</Route>
-						<Route element={<AuthRoute />}>
-							<Route path="/login" element={<Login />} />
-							<Route path="/register" element={<Register />} />
-						</Route>
-					</Routes>
-				</Context>
+				<NavBar />
+				<Routes>
+					<Route element={<PrivateRoute />}>
+						<Route path="/" element={<Home />} />
+					</Route>
+					<Route element={<AuthRoute />}>
+						<Route path="/login" element={<Login />} />
+						<Route path="/register" element={<Register />} />
+					</Route>
+				</Routes>
 			</div>
 		</ChakraProvider>
 	);
