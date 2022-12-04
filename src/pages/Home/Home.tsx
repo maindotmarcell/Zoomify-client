@@ -41,7 +41,7 @@ export default function Home() {
 		// set our own video
 		navigator.mediaDevices
 			.getUserMedia({ video: true, audio: true })
-			.then((stream) => {
+			.then((stream: MediaStream) => {
 				setStream(stream);
 				myVideo.current.srcObject = stream;
 			});
@@ -66,8 +66,9 @@ export default function Home() {
 			setReceivingCall(false);
 			setCaller('');
 			setCallAccepted(false);
+			socket.current.disconnect();
+			socket.current.connect();
 			connectionRef.current.destroy();
-			window.location.reload();
 		});
 	}, []);
 
@@ -80,6 +81,7 @@ export default function Home() {
 			trickle: false,
 			stream: stream,
 		});
+		peer._debug = console.log;
 
 		// signal is what takes care of the TCP handshake and open connection between peers
 		peer.on('signal', (data) => {
@@ -111,6 +113,7 @@ export default function Home() {
 			trickle: false,
 			stream: stream,
 		});
+		peer._debug = console.log;
 		peer.on('signal', (data) => {
 			socket.current.emit('answerCall', { signal: data, to: caller });
 		});
@@ -126,9 +129,10 @@ export default function Home() {
 		setReceivingCall(false);
 		setCaller('');
 		setCallAccepted(false);
+		// socket.current.emit('endCall');
 		socket.current.disconnect();
+		socket.current.connect();
 		connectionRef.current.destroy();
-		window.location.reload();
 	};
 
 	return (
