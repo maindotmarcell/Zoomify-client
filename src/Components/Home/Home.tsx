@@ -24,7 +24,6 @@ export default function Home() {
 	);
 	const [callAccepted, setCallAccepted] = useState(false);
 	const [idToCall, setIdToCall] = useState('');
-	const [callEnded, setCallEnded] = useState(false);
 	const [name, setName] = useState('');
 
 	const myVideo = useRef() as MutableRefObject<HTMLVideoElement>;
@@ -35,8 +34,10 @@ export default function Home() {
 	const { userObject } = useContext(myContext) as any;
 
 	useEffect(() => {
+		// create socket.io (wrapped websocket) connection
 		socket.current = io(`${axios.defaults.baseURL}`);
 
+		// set our own video
 		navigator.mediaDevices
 			.getUserMedia({ video: true, audio: true })
 			.then((stream) => {
@@ -44,24 +45,31 @@ export default function Home() {
 				myVideo.current.srcObject = stream;
 			});
 
-		// define behavious for possible incoming socket.io events
-		socket.current.on('me', (id: string) => { // for getting socket id
+		// define handlers for possible incoming socket.io events
+		socket.current.on('me', (id: string) => {
+			// for getting socket id
 			console.log(id);
 			setMe(id);
 		});
 
-		socket.current.on('callUser', (data) => { // for setting up incoming call
+		socket.current.on('callUser', (data) => {
+			// for setting up incoming call
 			setReceivingCall(true);
 			setCaller(data.from);
 			setName(data.name);
 			setCallerSignal(data.signal);
 		});
 
-		// socket.current.on('callEnded', () => {
-		// 	console.log('hi');
-		// 	// connectionRef.current.destroy();
-		// })
+		socket.current.on('userLeft', () => {
+			// for handling peer disconnection
+			setReceivingCall(false);
+			setCaller('');
+			setCallAccepted(false);
+			connectionRef.current.destroy();
+		});
 	}, []);
+
+	// ------------ Handler functions to initiate call, accept call and end call -----------------------
 
 	const callUser = (id: string) => {
 		// initialising peer connection
@@ -71,6 +79,7 @@ export default function Home() {
 			stream: stream,
 		});
 
+		// signal is what takes care of the TCP handshake and open connection between peers
 		peer.on('signal', (data) => {
 			socket.current.emit('callUser', {
 				userToCall: id,
@@ -80,6 +89,7 @@ export default function Home() {
 			});
 		});
 
+		// setting peer's video stream when it is sent to us
 		peer.on('stream', (stream: MediaStream) => {
 			userVideo.current.srcObject = stream;
 		});
@@ -111,7 +121,10 @@ export default function Home() {
 	};
 
 	const leaveCall = () => {
-		setCallEnded(true);
+		setReceivingCall(false);
+		setCaller('');
+		setCallAccepted(false);
+		socket.current.disconnect();
 		connectionRef.current.destroy();
 	};
 
@@ -137,7 +150,7 @@ export default function Home() {
 						)}
 					</div>
 					<div className={styles.video}>
-						{callAccepted && !callEnded ? (
+						{callAccepted ? (
 							<video
 								playsInline
 								ref={userVideo}
@@ -168,7 +181,7 @@ export default function Home() {
 					onChange={(e) => setIdToCall(e.target.value)}
 				/>
 				<div className="call-button">
-					{callAccepted && !callEnded ? (
+					{callAccepted ? (
 						<Button variant="contained" color="secondary" onClick={leaveCall}>
 							End Call
 						</Button>
