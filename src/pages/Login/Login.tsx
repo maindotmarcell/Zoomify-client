@@ -2,7 +2,7 @@ import axios from '../../constants/axios';
 import React, { FormEvent, useContext, useEffect, useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
-import { myContext } from '../../context/UserContext';
+import { UserContext } from '../../context/UserContext';
 import {
 	Button,
 	Flex,
@@ -17,6 +17,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { githubLogin, googleLogin } from '../../helper/oauthStrategies';
 import isValidEmail from '../../helper/isValidEmail';
+import { IUserContext } from '../../types/maintypes';
 
 function Login() {
 	// input field values
@@ -32,10 +33,10 @@ function Login() {
 		else setInputValid(false);
 	}, [email, password]);
 
-	const { refreshUser } = useContext(myContext) as any;
+	const { refreshUser } = useContext(UserContext) as IUserContext;
 	const navigate = useNavigate();
 
-	const formBackground = useColorModeValue('gray.50', 'gray.700');
+	const formBackground = useColorModeValue('gray.300', 'gray.700');
 
 	const login = async (event: FormEvent) => {
 		event.preventDefault();

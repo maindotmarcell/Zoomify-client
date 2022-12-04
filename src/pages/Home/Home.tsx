@@ -5,7 +5,7 @@ import React, {
 	useRef,
 	useState,
 } from 'react';
-import { myContext } from '../../context/UserContext';
+import { UserContext } from '../../context/UserContext';
 import styles from './Home.module.css';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Peer from 'simple-peer';
@@ -13,6 +13,7 @@ import { io, Socket } from 'socket.io-client';
 import axios from '../../constants/axios';
 import { Button, IconButton, Textarea } from '@chakra-ui/react';
 import { MdOutlineContentCopy, MdLocalPhone } from 'react-icons/md';
+import { IUserContext } from '../../types/maintypes';
 
 export default function Home() {
 	const [me, setMe] = useState('');
@@ -31,7 +32,7 @@ export default function Home() {
 	const connectionRef = useRef() as MutableRefObject<Peer.Instance>;
 	const socket = useRef() as MutableRefObject<Socket>;
 
-	const { userObject } = useContext(myContext) as any;
+	const { userObject } = useContext(UserContext) as IUserContext;
 
 	useEffect(() => {
 		// create socket.io (wrapped websocket) connection

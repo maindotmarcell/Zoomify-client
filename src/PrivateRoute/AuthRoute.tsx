@@ -1,9 +1,10 @@
 import React, { useContext } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
-import { myContext } from '../context/UserContext';
+import { UserContext } from '../context/UserContext';
+import { IUserContext } from '../types/maintypes';
 
 const AuthRoute = () => {
-	const { signedIn } = useContext(myContext) as any;
+	const { signedIn } = useContext(UserContext) as IUserContext;
 	return signedIn ? <Navigate to="/" /> : <Outlet />;
 };
 

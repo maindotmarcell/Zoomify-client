@@ -1,11 +1,12 @@
 import React, { useState, createContext, useEffect } from 'react';
 import { AxiosResponse } from 'axios';
 import axios from '../constants/axios';
+import { IUser } from '../types/maintypes';
 
-export const myContext = createContext({});
+export const UserContext = createContext({});
 
-export default function Context({ children }: any) {
-	const [userObject, setUserObject] = useState<any>();
+export default function Context({ children }: React.PropsWithChildren) {
+	const [userObject, setUserObject] = useState<IUser>();
 	const [signedIn, setSignedIn] = useState(false);
 
 	useEffect(() => {
@@ -14,7 +15,7 @@ export default function Context({ children }: any) {
 
 	const refreshUser = () => {
 		axios
-			.get('/getuser', { withCredentials: true })
+			.get('/auth/getuser', { withCredentials: true })
 			.then((res: AxiosResponse) => {
 				console.log(res);
 				if (res.data) {
@@ -25,8 +26,10 @@ export default function Context({ children }: any) {
 	};
 
 	return (
-		<myContext.Provider value={{ userObject, refreshUser, signedIn, setSignedIn }}>
+		<UserContext.Provider
+			value={{ userObject, refreshUser, signedIn, setSignedIn }}
+		>
 			{children}
-		</myContext.Provider>
+		</UserContext.Provider>
 	);
 }

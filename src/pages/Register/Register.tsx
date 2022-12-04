@@ -2,7 +2,7 @@ import React, { FormEvent, useContext, useEffect, useState } from 'react';
 import axios from '../../constants/axios';
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
-import { myContext } from '../../context/UserContext';
+import { UserContext } from '../../context/UserContext';
 import {
 	Button,
 	Flex,
@@ -17,6 +17,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { githubLogin, googleLogin } from '../../helper/oauthStrategies';
 import isValidEmail from '../../helper/isValidEmail';
+import { IUserContext } from '../../types/maintypes';
 
 function Register() {
 	// input field values
@@ -38,7 +39,7 @@ function Register() {
 	const [prevEmail, setPrevEmail] = useState('');
 
 	// user context
-	const { refreshUser } = useContext(myContext) as any;
+	const { refreshUser } = useContext(UserContext) as IUserContext;
 
 	// router navigater
 	const navigate = useNavigate();
@@ -84,7 +85,7 @@ function Register() {
 		passwordMatching,
 	]);
 
-	const formBackground = useColorModeValue('gray.50', 'gray.700');
+	const formBackground = useColorModeValue('gray.300', 'gray.700');
 
 	const register = async (event: FormEvent) => {
 		event.preventDefault();

@@ -1,18 +1,18 @@
 import React from 'react';
-import './GlobalStyles.css';
 import { Routes, Route } from 'react-router-dom';
-import Home from './components/Home/Home';
-import Login from './components/Login/Login';
+import Home from './pages/Home/Home';
+import Login from './pages/Login/Login';
 import NavBar from './components/NavBar/NavBar';
-import Register from './components/Register/Register';
+import Register from './pages/Register/Register';
 import { ChakraProvider } from '@chakra-ui/react';
 import PrivateRoute from './PrivateRoute/PrivateRoute';
 import Context from './context/UserContext';
 import AuthRoute from './PrivateRoute/AuthRoute';
+import theme from './constants/theme';
 
 function App() {
 	return (
-		<ChakraProvider>
+		<ChakraProvider theme={theme}>
 			<div className="App">
 				<Context>
 					<NavBar />

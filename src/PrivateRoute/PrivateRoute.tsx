@@ -1,17 +1,12 @@
-import { Flex } from '@chakra-ui/react';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
-import { myContext } from '../context/UserContext';
+import { UserContext } from '../context/UserContext';
+import { IUserContext } from '../types/maintypes';
 
 const PrivateRoute = () => {
-	const { signedIn } = useContext(myContext) as any;
-	const { userObject } = useContext(myContext) as any;
+	const { signedIn } = useContext(UserContext) as IUserContext;
 
-	if (signedIn) {
-		return signedIn ? <Outlet /> : <Navigate to="/login" />;
-	} else {
-		return <Flex></Flex>;
-	}
+	return signedIn ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default PrivateRoute;

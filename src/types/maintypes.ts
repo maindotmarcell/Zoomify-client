@@ -7,3 +7,10 @@ export interface IUser {
 	__v: number;
 	_id: string;
 }
+
+export interface IUserContext {
+	userObject: IUser;
+	signedIn: boolean;
+	setSignedIn(): void;
+	refreshUser(): void;
+}
