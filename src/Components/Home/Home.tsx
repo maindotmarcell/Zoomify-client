@@ -66,6 +66,7 @@ export default function Home() {
 			setCaller('');
 			setCallAccepted(false);
 			connectionRef.current.destroy();
+			window.location.reload();
 		});
 	}, []);
 
@@ -126,6 +127,7 @@ export default function Home() {
 		setCallAccepted(false);
 		socket.current.disconnect();
 		connectionRef.current.destroy();
+		window.location.reload();
 	};
 
 	return (
