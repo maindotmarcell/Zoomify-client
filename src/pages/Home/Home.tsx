@@ -11,7 +11,15 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Peer from 'simple-peer';
 import { io, Socket } from 'socket.io-client';
 import axios from '../../constants/axios';
-import { Flex, Button, IconButton, Textarea, Heading } from '@chakra-ui/react';
+import {
+	Flex,
+	Button,
+	IconButton,
+	Text,
+	Heading,
+	Stack,
+	Input,
+} from '@chakra-ui/react';
 import { MdOutlineContentCopy, MdLocalPhone } from 'react-icons/md';
 import { IUserContext } from '../../types/maintypes';
 
@@ -26,6 +34,7 @@ export default function Home() {
 	const [callAccepted, setCallAccepted] = useState(false);
 	const [idToCall, setIdToCall] = useState('');
 	const [name, setName] = useState('');
+	const [calling, setCalling] = useState(false);
 
 	const myVideo = useRef() as MutableRefObject<HTMLVideoElement>;
 	const userVideo = useRef() as MutableRefObject<HTMLVideoElement>;
@@ -60,29 +69,13 @@ export default function Home() {
 			setName(data.name);
 			setCallerSignal(data.signal);
 		});
-
-		socket.current.on('callDeclined', () => {
-			// decline handler code will come here
-			window.location.reload();
-		});
 	}, []);
 
 	useEffect(() => {
 		socket.current.on('userLeft', (data) => {
 			// for handling peer disconnection
-			console.log(
-				'🚀 ~ file: Home.tsx:74 ~ socket.current.on ~ caller',
-				caller
-			);
-			console.log(
-				'🚀 ~ file: Home.tsx:74 ~ socket.current.on ~ data.disconnectedUser',
-				data.disconnectedUser
-			);
 			if (data.disconnectedUser === caller) {
 				setReceivingCall(false);
-				// setCaller('');
-				// setCallAccepted(false);
-				// setCallerSignal('');
 				window.location.reload();
 			}
 		});
@@ -91,6 +84,7 @@ export default function Home() {
 	// ------------ Handler functions to initiate call, accept call and end call -----------------------
 
 	const callUser = (id: string) => {
+		setCalling(true);
 		// initialising peer connection
 		const peer = new Peer({
 			initiator: true,
@@ -98,10 +92,6 @@ export default function Home() {
 			stream: stream,
 		});
 		peer._debug = console.log;
-		console.log(
-			'🚀 ~ file: Home.tsx:86 ~ callUser ~ peer.destroyed',
-			peer.destroyed
-		);
 
 		// signal is what takes care of the TCP handshake and open connection between peers
 		peer.on('signal', (data) => {
@@ -118,11 +108,18 @@ export default function Home() {
 			userVideo.current.srcObject = stream;
 		});
 
-		socket.current.on('callAccepted', (signal) => {
+		socket.current.on('callAccepted', (data) => {
 			setCallAccepted(true);
+			setCalling(false);
 			// we are setting the caller, or in other words partner, so we can disconnet properly:
 			setCaller(idToCall);
-			peer.signal(signal);
+			setName(data.name);
+			peer.signal(data.signal);
+		});
+
+		socket.current.on('callDeclined', () => {
+			setCalling(false);
+			window.location.reload();
 		});
 
 		connectionRef.current = peer;
@@ -137,7 +134,11 @@ export default function Home() {
 		});
 		peer._debug = console.log;
 		peer.on('signal', (data) => {
-			socket.current.emit('answerCall', { signal: data, to: caller });
+			socket.current.emit('answerCall', {
+				signal: data,
+				to: caller,
+				name: userObject.username,
+			});
 		});
 		peer.on('stream', (stream) => {
 			userVideo.current.srcObject = stream;
@@ -157,101 +158,116 @@ export default function Home() {
 	};
 
 	const leaveCall = () => {
-		setReceivingCall(false);
-		setCaller('');
-		setCallAccepted(false);
-		setCallerSignal('');
 		connectionRef.current.destroy();
 		window.location.reload();
 	};
 
 	return (
 		<div>
-			<Heading as="h1">Zoomify: Marcell's Wonder Video Chat</Heading>
-			<Heading as="h2">Welcome back {userObject.username}</Heading>
+			<Flex flexDirection="column">
+				<Flex margin={5} wrap="wrap" flexDirection="column">
+					<Heading as="h1" size="4xl" noOfLines={1}>
+						Zoomify
+					</Heading>
+					<Heading size="md">Marcell's Wonder Video Chat</Heading>
+				</Flex>
+			</Flex>
 			<Flex
-				height="100vh"
+				margin={10}
 				alignItems="center"
 				justifyContent="center"
 				flexDirection="column"
 			>
-				<div className={styles.container}>
-					<div className={styles.videoContainer}>
-						<div className={styles.video}>
-							{stream && (
-								<video
-									playsInline
-									muted
-									ref={myVideo}
-									autoPlay
-									style={{ width: '300px' }}
-								/>
-							)}
-						</div>
-						<div className={styles.video}>
-							{callAccepted ? (
-								<video
-									playsInline
-									ref={userVideo}
-									autoPlay
-									style={{ width: '300px' }}
-								/>
-							) : null}
+				<Flex flexDirection="row">
+					<div className={styles.container}>
+						<div className={styles.videoContainer}>
+							<div className={styles.video}>
+								{stream && (
+									<video
+										playsInline
+										muted
+										ref={myVideo}
+										autoPlay
+										style={{ width: '350px' }}
+									/>
+								)}
+							</div>
+							<div className={styles.video}>
+								{callAccepted ? (
+									<video
+										playsInline
+										ref={userVideo}
+										autoPlay
+										style={{ width: '350px' }}
+									/>
+								) : null}
+							</div>
 						</div>
 					</div>
-				</div>
-				<div className="myId">
-					<p>Me: {me}</p>
-					<CopyToClipboard text={me}>
-						<Button
-							variant="contained"
-							color="primary"
-							leftIcon={<MdOutlineContentCopy fontSize="large" />}
-						>
-							Copy ID
-						</Button>
-					</CopyToClipboard>
-
-					<Textarea
-						id="filled-basic"
-						placeholder="ID to call"
-						variant="filled"
-						value={idToCall}
-						onChange={(e) => setIdToCall(e.target.value)}
-					/>
+				</Flex>
+				<Stack align="stretch">
+					{/* <p>Me: {me}</p> */}
 					<div className="call-button">
 						{callAccepted ? (
-							<Button variant="contained" color="secondary" onClick={leaveCall}>
-								End Call
-							</Button>
+							<Stack margin={2}>
+								<Text>
+									{name} ({caller})
+								</Text>
+
+								<Button variant="outline" colorScheme="red" onClick={leaveCall}>
+									End Call
+								</Button>
+							</Stack>
 						) : (
-							<IconButton
-								color="primary"
-								aria-label="call"
-								onClick={() => callUser(idToCall)}
-							>
-								<MdLocalPhone fontSize="large" />
-							</IconButton>
+							<Stack>
+								<CopyToClipboard text={me}>
+									<Button
+										variant="outline"
+										colorScheme="gray"
+										leftIcon={<MdOutlineContentCopy fontSize="large" />}
+									>
+										Copy my ID
+									</Button>
+								</CopyToClipboard>
+
+								<Input
+									id="filled-basic"
+									placeholder="Paste partner's ID to call"
+									variant="filled"
+									value={idToCall}
+									onChange={(e) => setIdToCall(e.target.value)}
+								/>
+								<IconButton
+									color="primary"
+									aria-label="call"
+									onClick={() => callUser(idToCall)}
+								>
+									<MdLocalPhone fontSize="large" />
+								</IconButton>
+							</Stack>
 						)}
-						{caller}
 					</div>
-				</div>
-				<div>
 					{receivingCall && !callAccepted ? (
 						<div className="caller">
 							<h1>
 								{/* From: {caller}, {name} is calling... */}
-								From:{name} is calling...
+								{name} is calling...
 							</h1>
-							<Button variant="contained" color="primary" onClick={answerCall}>
+							<Button
+								margin={1}
+								variant="outline"
+								colorScheme="green"
+								onClick={answerCall}
+							>
 								Answer
 							</Button>
-							<Button variant="contained" color="primary" onClick={declineCall}>
+							<Button variant="outline" colorScheme="red" onClick={declineCall}>
 								Decline
 							</Button>
 						</div>
 					) : null}
-				</div>
+				</Stack>
+				{calling && <Text>Calling...</Text>}
 			</Flex>
 		</div>
 	);

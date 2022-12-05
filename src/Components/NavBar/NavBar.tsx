@@ -1,13 +1,18 @@
 import React, { useContext } from 'react';
-import styles from './NavBar.module.css';
 import axios from '../../constants/axios';
 import { AxiosResponse } from 'axios';
-import { Button, useColorMode, useColorModeValue } from '@chakra-ui/react';
+import {
+	Button,
+	useColorMode,
+	useColorModeValue,
+	Text,
+	Flex,
+} from '@chakra-ui/react';
 import { UserContext } from '../../context/UserContext';
 import { IUserContext } from '../../types/maintypes';
 
 export default function NavBar() {
-	const { signedIn } = useContext(UserContext) as IUserContext;
+	const { userObject, signedIn } = useContext(UserContext) as IUserContext;
 	console.log('Signed in: ', signedIn);
 	const { toggleColorMode } = useColorMode();
 	const textColour = useColorModeValue('black', 'white');
@@ -27,9 +32,16 @@ export default function NavBar() {
 	};
 
 	return (
-		<div className={styles.navBarWrapper}>
-			<ul className={styles.navBar}>
+		<Flex
+			bg="black"
+			height={50}
+			justifyContent="flex-start"
+			color="white"
+			style={{ width: '100%' }}
+		>
+			<Flex alignItems="center" justifyContent="space-between">
 				<Button
+					margin={1}
 					style={{ userSelect: 'none' }}
 					color={textColour}
 					onClick={toggleColorMode}
@@ -38,6 +50,7 @@ export default function NavBar() {
 				</Button>
 				{signedIn && (
 					<Button
+						margin={1}
 						style={{ userSelect: 'none' }}
 						colorScheme="red"
 						onClick={logout}
@@ -45,7 +58,8 @@ export default function NavBar() {
 						Logout
 					</Button>
 				)}
-			</ul>
-		</div>
+				{signedIn && <Text margin={1}>Welcome back {userObject.username}</Text>}
+			</Flex>
+		</Flex>
 	);
 }
