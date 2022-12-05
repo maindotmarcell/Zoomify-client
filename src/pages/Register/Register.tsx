@@ -10,6 +10,7 @@ import {
 	FormErrorMessage,
 	Heading,
 	Input,
+	Spinner,
 	Stack,
 	Text,
 	useColorModeValue,
@@ -39,7 +40,7 @@ function Register() {
 	const [prevEmail, setPrevEmail] = useState('');
 
 	// user context
-	const { refreshUser } = useContext(UserContext) as IUserContext;
+	const { refreshUser, loadingUser } = useContext(UserContext) as IUserContext;
 
 	// router navigater
 	const navigate = useNavigate();
@@ -86,6 +87,7 @@ function Register() {
 	]);
 
 	const formBackground = useColorModeValue('gray.300', 'gray.700');
+	const textColour = useColorModeValue('gray.400', 'white');
 
 	const register = async (event: FormEvent) => {
 		event.preventDefault();
@@ -114,105 +116,111 @@ function Register() {
 
 	return (
 		<Flex height="100vh" alignItems="center" justifyContent="center">
-			<Flex direction="column" background={formBackground} p={12} rounded={6}>
-				<Heading mb={6}>Register</Heading>
-				<form onSubmit={register}>
+			{loadingUser ? (
+				<Spinner size="xl" />
+			) : (
+				<Flex direction="column" background={formBackground} p={12} rounded={6}>
+					<Heading style={{ userSelect: 'none' }} mb={6}>
+						Register
+					</Heading>
+					<form onSubmit={register}>
+						<Stack mb={6}>
+							<FormControl isInvalid={usernameInvalid}>
+								<Input
+									variant="filled"
+									type="text"
+									placeholder="Username"
+									value={username}
+									onChange={(e) => setUsername(e.target.value)}
+								></Input>
+								{usernameInvalid && (
+									<FormErrorMessage>
+										Username must be at least 3 characters
+									</FormErrorMessage>
+								)}
+							</FormControl>
+							<FormControl isInvalid={emailInvalid || emailTaken}>
+								<Input
+									variant="filled"
+									type="email"
+									placeholder="Email"
+									value={email}
+									onChange={(e) => setEmail(e.target.value)}
+								></Input>
+								{emailInvalid && (
+									<FormErrorMessage>
+										Email must have a valid format
+									</FormErrorMessage>
+								)}
+								{emailTaken && (
+									<FormErrorMessage>
+										Email: {prevEmail} is already taken
+									</FormErrorMessage>
+								)}
+							</FormControl>
+							<FormControl isInvalid={passwordIsShort}>
+								<Input
+									variant="filled"
+									type="password"
+									placeholder="Password"
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
+								></Input>
+								{passwordIsShort && (
+									<FormErrorMessage>
+										Password must be at least 6 characters
+									</FormErrorMessage>
+								)}
+							</FormControl>
+							<FormControl isInvalid={!passwordMatching}>
+								<Input
+									variant="filled"
+									type="password"
+									placeholder="Confirm Password"
+									value={password2}
+									onChange={(e) => setPassword2(e.target.value)}
+								></Input>
+								{!passwordMatching && (
+									<FormErrorMessage>Passwords aren't matching</FormErrorMessage>
+								)}
+							</FormControl>
+							{inputValid ? (
+								<Button colorScheme="teal" type="submit">
+									Register
+								</Button>
+							) : (
+								<Button colorScheme="gray" style={{ cursor: 'auto' }}>
+									Register
+								</Button>
+							)}
+						</Stack>
+					</form>
 					<Stack mb={6}>
-						<FormControl isInvalid={usernameInvalid}>
-							<Input
-								variant="filled"
-								type="text"
-								placeholder="Username"
-								value={username}
-								onChange={(e) => setUsername(e.target.value)}
-							></Input>
-							{usernameInvalid && (
-								<FormErrorMessage>
-									Username must be at least 3 characters
-								</FormErrorMessage>
-							)}
-						</FormControl>
-						<FormControl isInvalid={emailInvalid || emailTaken}>
-							<Input
-								variant="filled"
-								type="email"
-								placeholder="Email"
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-							></Input>
-							{emailInvalid && (
-								<FormErrorMessage>
-									Email must have a valid format
-								</FormErrorMessage>
-							)}
-							{emailTaken && (
-								<FormErrorMessage>
-									Email: {prevEmail} is already taken
-								</FormErrorMessage>
-							)}
-						</FormControl>
-						<FormControl isInvalid={passwordIsShort}>
-							<Input
-								variant="filled"
-								type="password"
-								placeholder="Password"
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
-							></Input>
-							{passwordIsShort && (
-								<FormErrorMessage>
-									Password must be at least 6 characters
-								</FormErrorMessage>
-							)}
-						</FormControl>
-						<FormControl isInvalid={!passwordMatching}>
-							<Input
-								variant="filled"
-								type="password"
-								placeholder="Confirm Password"
-								value={password2}
-								onChange={(e) => setPassword2(e.target.value)}
-							></Input>
-							{!passwordMatching && (
-								<FormErrorMessage>Passwords aren't matching</FormErrorMessage>
-							)}
-						</FormControl>
-						{inputValid ? (
-							<Button colorScheme="teal" type="submit">
-								Register
-							</Button>
-						) : (
-							<Button colorScheme="gray" style={{ cursor: 'auto' }}>
-								Register
-							</Button>
-						)}
+						<h3 style={{ userSelect: 'none' }}>Or register with:</h3>
+						<Button
+							background="#4385f4"
+							mb={3}
+							color={textColour}
+							leftIcon={<FcGoogle size="2rem" />}
+							onClick={googleLogin}
+						>
+							<Text>Register with Google</Text>
+						</Button>
+						<Button
+							background="rgb(56,56,56)"
+							color={textColour}
+							width="100%"
+							leftIcon={<FaGithub size="2rem" />}
+							onClick={githubLogin}
+						>
+							<Text>Register with GitHub</Text>
+						</Button>
 					</Stack>
-				</form>
-				<Stack mb={6}>
-					<h3>Or register with:</h3>
-					<Button
-						background="#4385f4"
-						mb={3}
-						color="white"
-						leftIcon={<FcGoogle size="2rem" />}
-						onClick={googleLogin}
-					>
-						<Text>Register with Google</Text>
-					</Button>
-					<Button
-						background="rgb(56,56,56)"
-						color="white"
-						width="100%"
-						leftIcon={<FaGithub size="2rem" />}
-						onClick={githubLogin}
-					>
-						<Text>Register with GitHub</Text>
-					</Button>
-				</Stack>
-				<Text>
-					Already have an account? <Link to="/login">Login here</Link>.
-				</Text>
-			</Flex>
+					<Text style={{ userSelect: 'none' }}>
+						Already have an account? <Link to="/login">Login here</Link>.
+					</Text>
+				</Flex>
+			)}
 		</Flex>
 	);
 }

@@ -29,11 +29,19 @@ export default function NavBar() {
 	return (
 		<div className={styles.navBarWrapper}>
 			<ul className={styles.navBar}>
-				<Button onClick={toggleColorMode} color={textColour}>
+				<Button
+					style={{ userSelect: 'none' }}
+					color={textColour}
+					onClick={toggleColorMode}
+				>
 					Toggle Theme
 				</Button>
 				{signedIn && (
-					<Button colorScheme="red" onClick={logout}>
+					<Button
+						style={{ userSelect: 'none' }}
+						colorScheme="red"
+						onClick={logout}
+					>
 						Logout
 					</Button>
 				)}

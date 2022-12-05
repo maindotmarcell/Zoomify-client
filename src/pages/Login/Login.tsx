@@ -65,12 +65,14 @@ function Login() {
 		<Flex height="100vh" alignItems="center" justifyContent="center">
 			{' '}
 			{loadingUser ? (
-				<Spinner />
+				<Spinner size="xl" />
 			) : (
 				<Flex direction="column" background={formBackground} p={12} rounded={6}>
 					<form onSubmit={login}>
 						<Stack mb={6}>
-							<Heading mb={6}>Login</Heading>
+							<Heading style={{ userSelect: 'none' }} mb={6}>
+								Login
+							</Heading>
 							<FormControl isInvalid={invalidCredentials}>
 								<Input
 									variant="filled"
@@ -104,11 +106,11 @@ function Login() {
 						</Stack>
 					</form>
 					<Stack mb={6}>
-						<h3>Or register with:</h3>
+						<h3 style={{ userSelect: 'none' }}>Or register with:</h3>
 						<Button
 							background="#4385f4"
 							mb={3}
-							color="white"
+							color="gray.400"
 							leftIcon={<FcGoogle size="2rem" />}
 							onClick={googleLogin}
 						>
@@ -116,7 +118,7 @@ function Login() {
 						</Button>
 						<Button
 							background="rgb(56,56,56)"
-							color="white"
+							color="gray.400"
 							width="100%"
 							leftIcon={<FaGithub size="2rem" />}
 							onClick={githubLogin}
@@ -124,7 +126,7 @@ function Login() {
 							<Text>Login with GitHub</Text>
 						</Button>
 					</Stack>
-					<Text>
+					<Text style={{ userSelect: 'none' }}>
 						Don't have an account yet? <Link to="/register">Register here</Link>
 						.
 					</Text>
