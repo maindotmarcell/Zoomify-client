@@ -15,3 +15,13 @@ export interface IUserContext {
 	setSignedIn(): void;
 	refreshUser(): void;
 }
+
+export interface IEditFieldProps {
+	onSubmit: (nextValue: string) => void;
+}
+
+export interface IChangePWModal {
+	isOpen: boolean;
+	onOpen: () => void;
+	onClose: () => void;
+}

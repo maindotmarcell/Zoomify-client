@@ -8,6 +8,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import PrivateRoute from './PrivateRoute/PrivateRoute';
 import AuthRoute from './PrivateRoute/AuthRoute';
 import theme from './constants/theme';
+import Account from './pages/Account/Account';
 
 function App() {
 	return (
@@ -17,6 +18,7 @@ function App() {
 				<Routes>
 					<Route element={<PrivateRoute />}>
 						<Route path="/" element={<Home />} />
+						<Route path='/account' element={<Account />}/>
 					</Route>
 					<Route element={<AuthRoute />}>
 						<Route path="/login" element={<Login />} />
