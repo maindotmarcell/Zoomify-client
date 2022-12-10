@@ -5,13 +5,14 @@ export const passwordUpdateSchema = yup.object().shape({
 		.string()
 		.min(6)
 		.max(50)
-		.required('Current Password is required'),
+		.required('Current password is required'),
 	newPassword: yup
 		.string()
-		.min(6, 'Password too short')
-		.max(50, 'Password too long')
-		.required('New Password is required'),
+		.min(6, 'Password must be at least 6 characters')
+		.max(50, 'Password is too long')
+		.required('New password is required'),
 	confirmPassword: yup
 		.string()
-		.oneOf([yup.ref('password'), null], 'Passwords must match'),
+		.oneOf([yup.ref('newPassword'), null], 'Passwords must match')
+		.required('Confirmation password is required'),
 });

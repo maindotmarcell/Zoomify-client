@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
 	Button,
 	Card,
@@ -11,12 +11,31 @@ import {
 } from '@chakra-ui/react';
 import EditField from '../../components/EditField/EditField';
 import PasswordUpdateModal from '../../components/ChangePasswordModal/PasswordUpdateModal';
+import axios from '../../constants/axios';
+import { AxiosResponse } from 'axios';
+import { UserContext } from '../../context/UserContext';
+import { IUserContext } from '../../types/maintypes';
 
 const Account = () => {
+	const { userObject } = useContext(UserContext) as IUserContext;
+
 	const { isOpen, onOpen, onClose } = useDisclosure();
 
-	const submitNewUsername = (newUsername: string) => {
+	const submitNewUsername = async (newUsername: string) => {
 		console.log('Updating new username to:', newUsername);
+		const response: AxiosResponse = await axios.put(
+			'/account/updateUsername',
+			{
+				id: userObject._id,
+				newUsername,
+			},
+			{ withCredentials: true }
+		);
+		console.log(response);
+	};
+
+	const deleteAccount = () => {
+		console.log('Delete Account');
 	};
 
 	return (
@@ -33,7 +52,9 @@ const Account = () => {
 								<EditField onSubmit={submitNewUsername} />
 							</HStack>
 							<Button onClick={onOpen}>Change Password</Button>
-							<Button colorScheme="red">Delete Account</Button>
+							<Button onClick={deleteAccount} colorScheme="red">
+								Delete Account
+							</Button>
 						</Stack>
 					</CardBody>
 				</Card>

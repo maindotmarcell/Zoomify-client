@@ -1,40 +1,41 @@
+import React, { useContext } from 'react';
 import {
 	Button,
 	Modal,
 	ModalBody,
-	ModalCloseButton,
 	ModalContent,
 	ModalFooter,
 	ModalHeader,
 	ModalOverlay,
 	FormLabel,
 	Input,
+	Text,
 } from '@chakra-ui/react';
 import { Formik, Field, Form } from 'formik';
-import React, { useState } from 'react';
-import { IChangePWModal } from '../../types/maintypes';
+import { IChangePWModal, IUserContext } from '../../types/maintypes';
 import { passwordUpdateSchema } from '../../validation/PasswordUpdateValidation';
+import axios from '../../constants/axios';
+import { AxiosResponse } from 'axios';
+import { UserContext } from '../../context/UserContext';
 
 export default function PasswordUpdateModal(props: IChangePWModal) {
-	const [password, setPassword] = useState('');
-	const [newPassword, setNewPassword] = useState('');
-	const [confirmPassword, setConfirmPassword] = useState('');
+	const { userObject } = useContext(UserContext) as IUserContext;
 
-	const updatePassword = async () => {
-		let formData = {
-			password,
-			newPassword,
-			confirmPassword,
-		};
-		try {
-			const isValid = await passwordUpdateSchema.isValid(formData);
-			console.log(
-				'🚀 ~ file: PasswordUpdateModal.tsx:30 ~ changePassword ~ isValid',
-				isValid
-			);
-		} catch (error: any) {
-			console.log(error.errors);
-		}
+	const updatePassword = async (password: string, newPassword: string) => {
+		const response: AxiosResponse = await axios.put(
+			'/account/updatePassword',
+			{
+				id: userObject._id,
+				password,
+				newPassword,
+			},
+			{
+				withCredentials: true,
+			}
+		);
+
+		if (response.data === 'Incorrect password.') alert('Incorrect password.');
+		if (response.data === 'Password updated.') alert('Password updated.');
 	};
 
 	return (
@@ -48,14 +49,14 @@ export default function PasswordUpdateModal(props: IChangePWModal) {
 						newPassword: '',
 						confirmPassword: '',
 					}}
-					onSubmit={(data) => {
-						console.log(
-							'🚀 ~ file: PasswordUpdateModal.tsx:75 ~ PasswordUpdateModal ~ data',
-							data
-						);
+					onSubmit={async (data, { setSubmitting }) => {
+						setSubmitting(true);
+						await updatePassword(data.password, data.newPassword);
+						setSubmitting(false);
 					}}
+					validationSchema={passwordUpdateSchema}
 				>
-					{({ values }) => (
+					{({ values, errors, isSubmitting }) => (
 						<Form>
 							<ModalBody>
 								<FormLabel>Enter current password:</FormLabel>
@@ -65,20 +66,23 @@ export default function PasswordUpdateModal(props: IChangePWModal) {
 									placeholder="****"
 									as={Input}
 								></Field>
-								<FormLabel>Enter new password:</FormLabel>
+								<Text color="#fb8181">{errors.password}</Text>
+								<FormLabel mt={1}>New password:</FormLabel>
 								<Field
 									name="newPassword"
 									type="password"
 									placeholder="****"
 									as={Input}
 								></Field>
-								<FormLabel>Confirm new password:</FormLabel>
+								<Text color="#fb8181">{errors.newPassword}</Text>
+								<FormLabel mt={1}>Confirm new password:</FormLabel>
 								<Field
 									name="confirmPassword"
 									type="password"
 									placeholder="****"
 									as={Input}
 								></Field>
+								<Text color="#fb8181">{errors.confirmPassword}</Text>
 								<pre>{JSON.stringify(values, null, 2)}</pre>
 							</ModalBody>
 							<ModalFooter>
@@ -90,7 +94,11 @@ export default function PasswordUpdateModal(props: IChangePWModal) {
 								>
 									Close
 								</Button>
-								<Button colorScheme="green" type="submit">
+								<Button
+									isLoading={isSubmitting}
+									colorScheme="green"
+									type="submit"
+								>
 									Submit
 								</Button>
 							</ModalFooter>
