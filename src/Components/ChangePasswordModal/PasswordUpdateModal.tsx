@@ -34,8 +34,12 @@ export default function PasswordUpdateModal(props: IChangePWModal) {
 			}
 		);
 
-		if (response.data === 'Incorrect password.') alert('Incorrect password.');
-		if (response.data === 'Password updated.') alert('Password updated.');
+		if (response.status === 200) {
+			props.onClose();
+			alert('Password updated.');
+		}
+		if (response.data === 'Unauthorized: password is incorrect.')
+			alert('Incorrect password.');
 	};
 
 	return (

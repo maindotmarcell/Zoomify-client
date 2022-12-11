@@ -51,7 +51,9 @@ const Account = () => {
 								<Heading size="md">Username:</Heading>
 								<EditField onSubmit={submitNewUsername} />
 							</HStack>
-							<Button onClick={onOpen}>Change Password</Button>
+							{userObject.password && (
+								<Button onClick={onOpen}>Change Password</Button>
+							)}
 							<Button onClick={deleteAccount} colorScheme="red">
 								Delete Account
 							</Button>
