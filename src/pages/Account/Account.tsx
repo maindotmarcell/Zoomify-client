@@ -15,6 +15,7 @@ import axios from '../../constants/axios';
 import { AxiosResponse } from 'axios';
 import { UserContext } from '../../context/UserContext';
 import { IUserContext } from '../../types/maintypes';
+import DeleteAccountAlert from '../../components/DeleteAccountAlert/DeleteAccountAlert';
 
 const Account = () => {
 	const { userObject } = useContext(UserContext) as IUserContext;
@@ -34,10 +35,6 @@ const Account = () => {
 		console.log(response);
 	};
 
-	const deleteAccount = () => {
-		console.log('Delete Account');
-	};
-
 	return (
 		<div>
 			<Stack>
@@ -54,9 +51,7 @@ const Account = () => {
 							{userObject.password && (
 								<Button onClick={onOpen}>Change Password</Button>
 							)}
-							<Button onClick={deleteAccount} colorScheme="red">
-								Delete Account
-							</Button>
+							<DeleteAccountAlert />
 						</Stack>
 					</CardBody>
 				</Card>
