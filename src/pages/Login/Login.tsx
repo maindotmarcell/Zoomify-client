@@ -38,6 +38,7 @@ function Login() {
 	const navigate = useNavigate();
 
 	const formBackground = useColorModeValue('gray.300', 'gray.700');
+	const textColour = useColorModeValue('gray.400', 'white');
 
 	const login = async (event: FormEvent) => {
 		event.preventDefault();
@@ -106,11 +107,11 @@ function Login() {
 						</Stack>
 					</form>
 					<Stack mb={6}>
-						<h3 style={{ userSelect: 'none' }}>Or register with:</h3>
+						<h3 style={{ userSelect: 'none' }}>Or login with:</h3>
 						<Button
 							background="#4385f4"
 							mb={3}
-							color="gray.400"
+							color={textColour}
 							leftIcon={<FcGoogle size="2rem" />}
 							onClick={googleLogin}
 						>
@@ -118,7 +119,7 @@ function Login() {
 						</Button>
 						<Button
 							background="rgb(56,56,56)"
-							color="gray.400"
+							color={textColour}
 							width="100%"
 							leftIcon={<FaGithub size="2rem" />}
 							onClick={githubLogin}

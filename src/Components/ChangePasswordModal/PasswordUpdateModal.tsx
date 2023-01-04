@@ -87,7 +87,7 @@ export default function PasswordUpdateModal(props: IChangePWModal) {
 									as={Input}
 								></Field>
 								<Text color="#fb8181">{errors.confirmPassword}</Text>
-								<pre>{JSON.stringify(values, null, 2)}</pre>
+								{/* <pre>{JSON.stringify(values, null, 2)}</pre> */}
 							</ModalBody>
 							<ModalFooter>
 								<Button

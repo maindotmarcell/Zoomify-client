@@ -1,4 +1,4 @@
-import React, { FormEvent, useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import axios from '../../constants/axios';
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
@@ -6,8 +6,6 @@ import { UserContext } from '../../context/UserContext';
 import {
 	Button,
 	Flex,
-	FormControl,
-	FormErrorMessage,
 	Heading,
 	Input,
 	Spinner,
@@ -17,24 +15,11 @@ import {
 } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
 import { githubLogin, googleLogin } from '../../helper/oauthStrategies';
-import isValidEmail from '../../helper/isValidEmail';
 import { IUserContext } from '../../types/maintypes';
+import { Formik, Field, Form } from 'formik';
+import { registerSchema } from '../../validation/RegisterValidation';
 
 function Register() {
-	// input field values
-	const [email, setEmail] = useState('');
-	const [username, setUsername] = useState('');
-	const [password, setPassword] = useState('');
-	const [password2, setPassword2] = useState('');
-
-	// form validation variables
-	const [passwordIsShort, setPasswordIsShort] = useState(false);
-	const [emailInvalid, setEmailInvalid] = useState(false);
-	const [usernameInvalid, setUsernameInvalid] = useState(false);
-	const [inputIsEmpty, setInputIsEmpty] = useState(true);
-	const [inputValid, setInputValid] = useState(false);
-	const [passwordMatching, setPasswordMatching] = useState(true);
-
 	// email taken validation
 	const [emailTaken, setEmailTaken] = useState(false);
 	const [prevEmail, setPrevEmail] = useState('');
@@ -45,52 +30,14 @@ function Register() {
 	// router navigater
 	const navigate = useNavigate();
 
-	useEffect(() => {
-		!password && !email && !username
-			? setInputIsEmpty(true)
-			: setInputIsEmpty(false);
-
-		if (!inputIsEmpty) {
-			password.length < 6
-				? setPasswordIsShort(true)
-				: setPasswordIsShort(false);
-
-			!isValidEmail(email) ? setEmailInvalid(true) : setEmailInvalid(false);
-
-			username.length < 3
-				? setUsernameInvalid(true)
-				: setUsernameInvalid(false);
-
-			password === password2
-				? setPasswordMatching(true)
-				: setPasswordMatching(false);
-		}
-
-		!passwordIsShort &&
-		!emailInvalid &&
-		!usernameInvalid &&
-		!inputIsEmpty &&
-		passwordMatching
-			? setInputValid(true)
-			: setInputValid(false);
-	}, [
-		email,
-		username,
-		password,
-		password2,
-		inputValid,
-		inputIsEmpty,
-		passwordIsShort,
-		emailInvalid,
-		usernameInvalid,
-		passwordMatching,
-	]);
-
 	const formBackground = useColorModeValue('gray.300', 'gray.700');
 	const textColour = useColorModeValue('gray.400', 'white');
 
-	const register = async (event: FormEvent) => {
-		event.preventDefault();
+	const register = async (
+		username: string,
+		email: string,
+		password: string
+	) => {
 		try {
 			const response = await axios.post(
 				'/auth/local/register',
@@ -123,78 +70,76 @@ function Register() {
 					<Heading style={{ userSelect: 'none' }} mb={6}>
 						Register
 					</Heading>
-					<form onSubmit={register}>
-						<Stack mb={6}>
-							<FormControl isInvalid={usernameInvalid}>
-								<Input
-									variant="filled"
-									type="text"
-									placeholder="Username"
-									value={username}
-									onChange={(e) => setUsername(e.target.value)}
-								></Input>
-								{usernameInvalid && (
-									<FormErrorMessage>
-										Username must be at least 3 characters
-									</FormErrorMessage>
-								)}
-							</FormControl>
-							<FormControl isInvalid={emailInvalid || emailTaken}>
-								<Input
-									variant="filled"
-									type="email"
-									placeholder="Email"
-									value={email}
-									onChange={(e) => setEmail(e.target.value)}
-								></Input>
-								{emailInvalid && (
-									<FormErrorMessage>
-										Email must have a valid format
-									</FormErrorMessage>
-								)}
-								{emailTaken && (
-									<FormErrorMessage>
-										Email: {prevEmail} is already taken
-									</FormErrorMessage>
-								)}
-							</FormControl>
-							<FormControl isInvalid={passwordIsShort}>
-								<Input
-									variant="filled"
-									type="password"
-									placeholder="Password"
-									value={password}
-									onChange={(e) => setPassword(e.target.value)}
-								></Input>
-								{passwordIsShort && (
-									<FormErrorMessage>
-										Password must be at least 6 characters
-									</FormErrorMessage>
-								)}
-							</FormControl>
-							<FormControl isInvalid={!passwordMatching}>
-								<Input
-									variant="filled"
-									type="password"
-									placeholder="Confirm Password"
-									value={password2}
-									onChange={(e) => setPassword2(e.target.value)}
-								></Input>
-								{!passwordMatching && (
-									<FormErrorMessage>Passwords aren't matching</FormErrorMessage>
-								)}
-							</FormControl>
-							{inputValid ? (
-								<Button colorScheme="teal" type="submit">
-									Register
-								</Button>
-							) : (
-								<Button colorScheme="gray" style={{ cursor: 'auto' }}>
-									Register
-								</Button>
-							)}
-						</Stack>
-					</form>
+					<Formik
+						initialValues={{
+							username: '',
+							email: '',
+							password: '',
+							confirmPassword: '',
+						}}
+						onSubmit={async (data, { setSubmitting }) => {
+							setSubmitting(true);
+							await register(data.username, data.email, data.password);
+							setSubmitting(false);
+						}}
+						validationSchema={registerSchema}
+					>
+						{({ values, errors, isSubmitting }) => (
+							<Form>
+								<Stack mb={6}>
+									<Field
+										name="username"
+										type="text"
+										placeholder="Username"
+										as={Input}
+										variant="filled"
+									></Field>
+									<Text color="#fb8181">{errors.username}</Text>
+									<Field
+										name="email"
+										type="text"
+										placeholder="Email"
+										as={Input}
+										variant="filled"
+										mt={3}
+									></Field>
+									<Text color="#fb8181">{errors.email}</Text>
+									{emailTaken && (
+										<Text color="#fb8181">
+											Email: {prevEmail} is already taken
+										</Text>
+									)}
+									<Field
+										name="password"
+										type="password"
+										placeholder="Password"
+										as={Input}
+										variant="filled"
+										mt={3}
+									></Field>
+									<Text color="#fb8181">{errors.password}</Text>
+									<Field
+										name="confirmPassword"
+										type="password"
+										placeholder="Confirm Password"
+										as={Input}
+										variant="filled"
+										mt={3}
+									></Field>
+									<Text color="#fb8181">{errors.confirmPassword}</Text>
+									{/* <pre>{JSON.stringify(values, null, 2)}</pre> */}
+									<Button
+										isLoading={isSubmitting}
+										colorScheme="teal"
+										type="submit"
+										mt={6}
+									>
+										Register
+									</Button>
+								</Stack>
+							</Form>
+						)}
+					</Formik>
 					<Stack mb={6}>
 						<h3 style={{ userSelect: 'none' }}>Or register with:</h3>
 						<Button
